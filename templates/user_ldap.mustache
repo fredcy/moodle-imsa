@@ -1,0 +1,23 @@
+<table class="datatable">
+<thead>
+<th>username</th>
+<th>first name</th>
+<th>last name</th>
+<th>org status</th>
+<th>last access</th>
+<th>auth</th>
+</thead>
+<tbody>
+{{#usersa}}
+<tr>
+<td>{{username}}</td>
+<td>{{firstname}}</td>
+<td>{{lastname}}</td>
+<td>{{status}}</td>
+<td>{{lastaccess_str}}</td>
+<td>{{auth}}</td>
+</tr>
+{{/usersa}}
+</tbody>
+</table>
+

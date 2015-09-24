@@ -2,7 +2,7 @@
 require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 
-admin_externalpage_setup('toolimsa');
+admin_externalpage_setup('course_creators');
 $title = get_string('pluginname', 'tool_imsa');
 $PAGE->set_title($title);       // TITLE element value in HEAD
 $PAGE->set_heading($title); // just below logo
