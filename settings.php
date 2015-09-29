@@ -14,7 +14,11 @@ $category->add('imsa', new admin_externalpage('course_creators', "Course creator
                                               "$CFG->wwwroot/$CFG->admin/tool/imsa/index.php"));
 $category->add('imsa', new admin_externalpage('user_ldap', "User/LDAP connection",
                                               "$CFG->wwwroot/$CFG->admin/tool/imsa/user_ldap.php"));
+$category->add('imsa', new admin_externalpage('imsa_users', "IMSA user list",
+                                              "$CFG->wwwroot/$CFG->admin/tool/imsa/users.php",
+                                              'moodle/site:config', true));
 
 // Link the category itself into the admin menu structure
 $ADMIN->add('reports', $category);
+
 

@@ -1,0 +1,22 @@
+{{! -*- mode: web -*- }}
+<table class="datatable">
+	<thead>
+		<tr>
+			<th>username</th>
+			<th>first name</th>
+			<th>last name</th>
+			<th>last access</th>
+			<th>auth</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{#users}}<tr>
+			<td>{{username}}</td>
+			<td>{{firstname}}</td>
+			<td>{{lastname}}</td>
+			<td>{{lastaccess}}</td>
+			<td>{{auth}}</td>
+		</tr>{{/users}}
+	</tbody>
+</table>
+

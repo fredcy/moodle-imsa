@@ -17,4 +17,11 @@ class tool_imsa_renderer extends \plugin_renderer_base {
         #$out .= ('<pre>' . print_r($data, true) . '</pre>');
         return $out;
     }
+
+    public function users($data) {
+        $out = $this->output->heading('Selected users');
+        #$out .= ('<pre>' . print_r($data, true) . '</pre>');
+        $out .= $this->output->render_from_template("tool_imsa/users", $data);
+        return $out;
+    }
 }
