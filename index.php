@@ -24,25 +24,5 @@ foreach ($users as $user) {
 }
 $data = array('users' => $users2);
 
-$script = <<<SCRIPT
-requirejs.config({
-    paths: {
-        'datatables':  '//cdn.datatables.net/1.10.9/js/jquery.dataTables.min',
-        'fixedheader': '//cdn.datatables.net/fixedheader/3.0.0/js/dataTables.fixedHeader.min'
-    }
-});
- 
-require(['jquery', 'datatables'], function ($) {
-    $('table.datatable').dataTable({
-        'bAutoWidth': false,
-        'bInfo': false,
-        'bPaginate': false,
-        'aaSorting': [], /* disable initial sort */
-    });
-});
-SCRIPT;
-
-$PAGE->requires->js_amd_inline($script);
-
 echo $OUTPUT->render_from_template("tool_imsa/user_table", $data);
 echo $OUTPUT->footer();

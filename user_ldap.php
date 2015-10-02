@@ -27,10 +27,16 @@ admin_externalpage_setup('course_creators');
 $title = get_string('pluginname', 'tool_imsa');
 $PAGE->set_title($title);       // TITLE element value in HEAD
 $PAGE->set_heading($title);     // just below logo
-$PAGE->requires->js_amd_inline(js_datatables());
-foreach ($css_urls as $url) {
-    $PAGE->requires->css(new \moodle_url($url));
-}
+
+$selector = '.datatable';
+$params = array("select" => true);
+$params['buttons'] = array("selectAll", "selectNone");
+$params['dom'] = 'Bfrtip';      // needed to position buttons; else won't display
+$PAGE->requires->js_call_amd('tool_datatables/init', 'init', array($selector, $params));
+
+$PAGE->requires->css('/admin/tool/datatables/style/dataTables.bootstrap.css');
+$PAGE->requires->css('/admin/tool/datatables/style/select.bootstrap.css');
+
 echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('tool_imsa');
 $data = array('usersa' => $usersa);

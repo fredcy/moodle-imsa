@@ -21,10 +21,12 @@ admin_externalpage_setup('imsa_users');
 $title = get_string('pluginname', 'tool_imsa');
 $PAGE->set_title($title);       // TITLE element value in HEAD
 $PAGE->set_heading($title);     // just below logo
-$PAGE->requires->js_amd_inline(js_datatables());
-foreach ($css_urls as $url) {
-    $PAGE->requires->css(new \moodle_url($url));
-}
+
+$PAGE->requires->js_call_amd('tool_datatables/init', 'init', array($params));
+
+$PAGE->requires->css('/admin/tool/datatables/style/dataTables.bootstrap.css');
+$PAGE->requires->css('/admin/tool/datatables/style/select.bootstrap.css');
+
 echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('tool_imsa');
 echo $renderer->users(array('users' => $users));
