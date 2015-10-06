@@ -6,9 +6,13 @@ require_once($CFG->libdir . '/formslib.php');
 require_once(__DIR__ . '/lib.php');
 
 $fields = "username,firstname,lastname,lastaccess,deleted,auth";
+$lastinitial = null;
 $lastinitial = 'k';             // limit results in testing
+$firstinitial = null;
+$page = 0;
+$recordsperpage= 10000;
 $users = get_users(true, '', false, array(), 'lastname ASC',
-                   '', $lastinitial, '', '', $fields);
+                   $firstinitial, $lastinitial, $page, $recordsperpage, $fields);
 $usersa = array();
 $ld = new ldap();
 foreach ($users as $user) {
@@ -36,7 +40,8 @@ $params['dom'] = 'Bfrtip';      // needed to position buttons; else won't displa
 $PAGE->requires->js_call_amd('tool_datatables/init', 'init', array($selector, $params));
 
 $form_id = 'delete_form';
-$PAGE->requires->js_call_amd('tool_imsa/user_ldap', 'init', array($form_id));
+$selector = 'tr.selected td:first-child';
+$PAGE->requires->js_call_amd('tool_imsa/users', 'init', array($form_id, $selector, true));
 
 $PAGE->requires->css('/admin/tool/datatables/style/dataTables.bootstrap.css');
 $PAGE->requires->css('/admin/tool/datatables/style/select.bootstrap.css');

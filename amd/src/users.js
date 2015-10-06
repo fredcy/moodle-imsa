@@ -1,16 +1,21 @@
-define(['jquery'], function ($) {
+define(['jquery', 'core/log'], function ($, logger) {
+    function trace(msg) {
+	logger.debug("tool_imsa>>users: " + msg);
+    }
+    
     return {
-	init: function (form_id) {
-	    // When the user form is submitted generate a new form field that posts the selected usernames.
+	init: function (form_id, selector) {
 	    var form = $('#' + form_id);
-	    
+	    if (! selector) {
+		selector = "tr td:first-child";
+	    }
+	    trace("selector = " + selector);
 	    var collect_usernames = function () {
-		var selected_rows = form.find('tr');
-		var username_tds = selected_rows.find('td:first-child');
-		var usernames = username_tds.map(function() {
+		var username_elmts = form.find(selector);
+		var usernames = username_elmts.map(function() {
 		    return $(this).text();
 		}).get().join();
-		window.console.log("usernames: ", usernames);
+		trace("usernames = " + usernames);
 		var input = $('<input type="hidden" name="usernames" value="' + usernames + '" />');
 		form.append(input);
 	    };

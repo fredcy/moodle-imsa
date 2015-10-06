@@ -46,7 +46,7 @@ $PAGE->set_title($title);       // TITLE element value in HEAD
 $PAGE->set_heading($title);     // just below logo
 
 $form_id = 'confirm_form';
-$PAGE->requires->js_call_amd('tool_imsa/users', 'init', array($form_id));
+$PAGE->requires->js_call_amd('tool_imsa/users', 'init', array($form_id, null, true));
 
 echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('tool_imsa');
