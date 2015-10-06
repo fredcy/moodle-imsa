@@ -2,6 +2,7 @@
 namespace tool_imsa;
 require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->libdir . '/formslib.php');
 require_once(__DIR__ . '/lib.php');
 
 $fields = "username,firstname,lastname,lastaccess,deleted,auth";
@@ -34,11 +35,14 @@ $params['buttons'] = array("selectAll", "selectNone");
 $params['dom'] = 'Bfrtip';      // needed to position buttons; else won't display
 $PAGE->requires->js_call_amd('tool_datatables/init', 'init', array($selector, $params));
 
+$form_id = 'delete_form';
+$PAGE->requires->js_call_amd('tool_imsa/user_ldap', 'init', array($form_id));
+
 $PAGE->requires->css('/admin/tool/datatables/style/dataTables.bootstrap.css');
 $PAGE->requires->css('/admin/tool/datatables/style/select.bootstrap.css');
 
-echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('tool_imsa');
+echo $renderer->header();
 $data = array('usersa' => $usersa);
-echo $renderer->user_ldap($data);
-echo $OUTPUT->footer();
+echo $renderer->user_ldap($form_id, $data);
+echo $renderer->footer();
