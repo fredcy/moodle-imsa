@@ -12,7 +12,7 @@ $category = new admin_category('imsa', 'IMSA tools');
 // various pages.
 $category->add('imsa', new admin_externalpage('course_creators', "Course creators",
                                               "$CFG->wwwroot/$CFG->admin/tool/imsa/index.php"));
-$category->add('imsa', new admin_externalpage('user_ldap', "User/LDAP connection",
+$category->add('imsa', new admin_externalpage('user_ldap', "User/LDAP info",
                                               "$CFG->wwwroot/$CFG->admin/tool/imsa/user_ldap.php"));
 $category->add('imsa', new admin_externalpage('imsa_users', "IMSA user list",
                                               "$CFG->wwwroot/$CFG->admin/tool/imsa/users.php",

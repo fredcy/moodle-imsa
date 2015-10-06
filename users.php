@@ -26,10 +26,15 @@ $usernames = explode(',', $usernames_s);
 $users = array();
 
 $confirm_delete = optional_param('confirm-delete', '', PARAM_TEXT);
-if ($confirm_delete == 'Confirm') {
+$cancel = optional_param('cancel', '', PARAM_TEXT);
+if ($confirm_delete == 'Delete users') {
     delete_users($usernames);
-    redirect('user_ldap.php');
+    $message = "Deleted usernames: {$usernames_s}";
+    redirect('user_ldap.php', $message);
+} else if ($cancel) {
+    redirect('user_ldap.php', 'Cancelled; no users deleted');
 }
+// else carry on and display the page
 
 $fields = 'id, username, firstname, lastname, lastaccess, auth';
 foreach ($usernames as $username) {
