@@ -7,7 +7,7 @@ require_once(__DIR__ . '/lib.php');
 
 $fields = "username,firstname,lastname,lastaccess,deleted,auth";
 $lastinitial = null;
-$lastinitial = 'k';             // limit results in testing
+#$lastinitial = 'k';             // limit results in testing
 $firstinitial = null;
 $page = 0;
 $recordsperpage= 10000;
