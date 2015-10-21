@@ -48,6 +48,12 @@ $PAGE->requires->css('/admin/tool/datatables/style/select.bootstrap.css');
 
 $renderer = $PAGE->get_renderer('tool_imsa');
 echo $renderer->header();
+if (! empty($SESSION->alerts)) {
+    foreach ($SESSION->alerts as $alert) {
+        echo $renderer->notification($alert[0], $alert[1]);
+    }
+    unset($SESSION->alerts);
+}
 $data = array('usersa' => $usersa);
 echo $renderer->user_ldap($form_id, $data);
 echo $renderer->footer();

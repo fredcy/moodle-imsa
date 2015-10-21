@@ -8,6 +8,8 @@ require_once(__DIR__ . '/lib.php');
 
 function delete_users($usernames) {
     global $DB, $USER;
+    $successful = array();
+    $failed = array();
     foreach ($usernames as $username) {
         $user = $DB->get_record('user', array('username'=>$username, 'deleted'=>0), '*', MUST_EXIST);
         if (is_siteadmin($user)) {
@@ -17,8 +19,18 @@ function delete_users($usernames) {
             throw new \moodle_exception('usernotdeletederror', 'error');
         }
         error_log("about to delete user for username={$username}");
-        user_delete_user($user);
+        try {
+            user_delete_user($user);
+            $successful[] = $username;
+        } catch (\Exception $e) {
+            $info = get_exception_info($e);
+            error_log("info = " . print_r($info, true));
+            error_log("Exception while deleting {$username}: " . $e->getCode() . ': ' . $e->getMessage());
+            error_log($e->getTraceAsString());
+            $failed[] = $username;
+        }
     }
+    return array($successful, $failed);
 }
 
 $usernames_s = optional_param('usernames', '', PARAM_TEXT);
@@ -28,11 +40,22 @@ $users = array();
 $confirm_delete = optional_param('confirm-delete', '', PARAM_TEXT);
 $cancel = optional_param('cancel', '', PARAM_TEXT);
 if ($confirm_delete == 'Delete users') {
-    delete_users($usernames);
-    $message = "Deleted usernames: {$usernames_s}";
-    redirect('user_ldap.php', $message);
+    list($successful, $failed) = delete_users($usernames);
+    $SESSION->alerts = array();
+    $okcount = count($successful);
+    if ($okcount > 0) {
+        $message = "Deleted $okcount users with these usernames: " . implode(', ', $successful);
+        $SESSION->alerts[] = array($message, 'notifysuccess');
+    }
+    $failcount = count($failed);
+    if ($failcount > 0) {
+        $message = "Failed to delete $failcount users with these usernames: " . implode(', ', $failed);
+        $SESSION->alerts[] = array($message, 'notifyproblem');
+    }
+    redirect('user_ldap.php');
 } else if ($cancel) {
-    redirect('user_ldap.php', 'Cancelled; no users deleted');
+    $SESSION->alerts = array(array('Cancelled; no users deleted', 'notifymessage'));
+    redirect('user_ldap.php');
 }
 // else carry on and display the page
 

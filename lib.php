@@ -30,10 +30,15 @@ class ldap {
             error_log("error: Cannot bind to LDAP servers: {$config->host_url}");
             throw new \moodle_exception("Cannot connect to LDAP servers");
         }
+        $this->cache = \cache::make('tool_imsa', 'ldapinfo');
     }
 
     function status($username) {
         // Return LDAP status of given username (uid) as summary string.
+        $cached_status = $this->cache->get($username);
+        if ($cached_status !== false) {
+            return $cached_status;
+        }
         $basedn = 'ou=People,dc=imsa,dc=edu';
         $filter = "uid=$username";
         $attributes = array("uid", "organizationalstatus");
@@ -55,6 +60,7 @@ class ldap {
             }
         }
         ldap_free_result($resource);
+        $this->cache->set($username, $status);
         return $status;
     }
 
