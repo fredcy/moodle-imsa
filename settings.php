@@ -11,11 +11,16 @@ $category = new admin_category('imsa', 'IMSA tools');
 // to match the name values in the admin_externalpage_setup() calls for the
 // various pages.
 $category->add('imsa', new admin_externalpage('course_creators', "Course creators",
-                                              "$CFG->wwwroot/$CFG->admin/tool/imsa/index.php"));
+                                              "$CFG->wwwroot/$CFG->admin/tool/imsa/course_creators.php"));
 $category->add('imsa', new admin_externalpage('user_ldap', "User/LDAP info",
                                               "$CFG->wwwroot/$CFG->admin/tool/imsa/user_ldap.php"));
 $category->add('imsa', new admin_externalpage('imsa_users', "IMSA user list",
                                               "$CFG->wwwroot/$CFG->admin/tool/imsa/users.php",
+                                              'moodle/site:config', true));
+$category->add('imsa', new admin_externalpage('enrollments', "Enrollments",
+                                              "$CFG->wwwroot/$CFG->admin/tool/imsa/enrollments.php"));
+$category->add('imsa', new admin_externalpage('enrollments_update', "Enrollments Update",
+                                              "$CFG->wwwroot/$CFG->admin/tool/imsa/enrollments_update.php",
                                               'moodle/site:config', true));
 
 // Link the category itself into the admin menu structure

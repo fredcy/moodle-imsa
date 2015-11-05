@@ -1,0 +1,28 @@
+{{! -*- mode: web; web-mode-markup-indent-offset: 2 -*- }}
+<table class="datatable">
+  <thead>
+    <tr>
+      <th>name</th>
+      <th>username</th>
+      <th>course name</th>
+      <th>course start</th>
+      <th>enroll start</th>
+      <th>enroll end</th>
+      <th>time access</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#enrollments}}
+      <tr id="{{id}}">
+	<td>{{name}}</td>
+	<td>{{username}}</td>
+	<td>{{coursename}}</td>
+	<td>{{coursestart}}</td>
+	<td>{{enrollstart}}</td>
+	<td>{{enrollend}}</td>
+	<td>{{timeaccess}}</td>
+      </tr>
+    {{/enrollments}}
+  </tbody>
+</table>
+

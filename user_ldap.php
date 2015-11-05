@@ -28,7 +28,7 @@ $ld->close();
 
 //////////////// 
 
-admin_externalpage_setup('course_creators');
+admin_externalpage_setup('user_ldap');
 $title = get_string('pluginname', 'tool_imsa');
 $PAGE->set_title($title);       // TITLE element value in HEAD
 $PAGE->set_heading($title);     // just below logo
