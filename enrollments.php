@@ -35,7 +35,7 @@ left outer join (
 left outer join course on enrollment.courseid = course.id
 left outer join user_lastaccess ul on u.id = ul.userid and course.id = ul.courseid
 where u.deleted = 0
-and u.lastname like 'y%' -- TODO
+-- and u.lastname like 'y%'
 and u.username like '%@%'
 order by u.lastname, u.firstname, enrollment.courseid";
 

@@ -5,17 +5,6 @@ require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/formslib.php');
 require_once(__DIR__ . '/lib.php');
 
-require_login();
-$PAGE->set_context(\context_system::instance());
-$url = new \moodle_url("/admin/tool/imsa/enrollments_update.php");
-$PAGE->set_url($url);
-$PAGE->set_pagelayout('report');
-$title = get_string('pluginname', 'tool_imsa');
-$PAGE->set_title($title);       // TITLE element value in HEAD
-$PAGE->set_heading($title);     // just below logo
-admin_externalpage_setup('enrollments_update');
-
-$form_id = 'update_form';
 
 class enrollment_update_form extends \moodleform {
     function definition() {
@@ -27,9 +16,26 @@ class enrollment_update_form extends \moodleform {
     }
 }
 
+
+require_login();
+$PAGE->set_context(\context_system::instance());
+$url = new \moodle_url("/admin/tool/imsa/enrollments_update.php");
+$PAGE->set_url($url);
+$PAGE->set_pagelayout('report');
+$title = get_string('pluginname', 'tool_imsa');
+$PAGE->set_title($title);       // TITLE element value in HEAD
+$PAGE->set_heading($title);     // just below logo
+admin_externalpage_setup('enrollments_update');
+
+$form_id = 'update_form';
 $attributes = array('id' => $form_id);
 $mform = new enrollment_update_form(null, null, 'post', '', $attributes);
 
+$SESSION->alerts = array();
+
+// Get the selected user_enrolments ids, either as posted in from
+// enrollments.php or as self-posted from $mform. These are the records to
+// display and update.
 $selections_s = optional_param('selections', '', PARAM_TEXT);
 $enroll_ids = array();
 foreach (explode(',', $selections_s) as $selection) {
@@ -43,29 +49,46 @@ foreach (explode(',', $selections_s) as $selection) {
     // else ignore other values, "user-NNN" in particular
 }
 
-
 if ($mform->is_cancelled()) {
-    error_log("form cancelled");
+    $SESSION->alerts[] = array("Cancelled", 'notifymessage');
 } else if ($from_form = $mform->get_data()) {
-    // Form submitted, so process it.
-    // We already got $enroll_ids from the 'selections' above; don't need to get from $from_form again.
-
-    // Update the enrollment 'timeend' values to the new date.
+    // Form submitted; update the user_enrolment.timeend values to the new date.
+    // We already got $enroll_ids from the 'selections' above; don't need to get
+    // from $from_form again.
+    $timeend_after = $from_form->enrollend;
     $successful = array();
     $failed = array();
+    $unchanged = array();
+
     foreach ($enroll_ids as $id) {
-        $data = array('id' => $id, 'timeend' => $from_form->enrollend);
+        // get current timeend so we can log the change and ignore if no change
+        $record = $DB->get_record('user_enrolments', array('id' => $id));
+        if ($record === false) {
+            $failed[] = $id;
+            error_log("Error getting current user_enrolments for id = {$id}");
+            continue;
+        }
+        $timeend_before = $record->timeend;
+        if ($timeend_before == $timeend_after) {
+            $unchanged[] = $id;
+            continue;
+        }
+        $data = array('id' => $id, 'timeend' => $timeend_after);
         $ret = $DB->update_record('user_enrolments', $data);
         if ($ret === true) {
             $successful[] = $id;
+            error_log("Updated user_enrolments where id={$id} changing timeend from {$timeend_before} to {$timeend_after}");
         } else {
             $failed[] = $id;
         }
     }
 
-    // Report how that went.
+    // Summarize how that went, setting up data for later notification() calls.
     $date_str = date("Y-m-d", $from_form->enrollend);
-    $SESSION->alerts = array();
+    $nopcount = count($unchanged);
+    if ($nopcount > 0) {
+        $SESSION->alerts[] = array("No change to {$nopcount} selected enrollments", 'notifymessage');
+    }
     $okcount = count($successful);
     if ($okcount > 0) {
         $SESSION->alerts[] = array("Updated {$okcount} enrollments to end on {$date_str}", 'notifysuccess');
@@ -76,8 +99,10 @@ if ($mform->is_cancelled()) {
     }
 }
 
+// Now that we've processed any self-submit or self-cancel, continue on to
+// display the current state of the selected enrollments.
 
-// generate SQL "in" clause
+// Generate SQL "in" clause to get the selected enrollments.
 if (empty($enroll_ids)) {
     list($insql, $params) = array("is null", array()); // won't select anything
 } else {
@@ -104,20 +129,20 @@ order by user.lastname, user.firstname, course.id
 
 $result = $DB->get_records_sql($sql, $params);
 
-// Convert from array-of-objects form returned from SQL API to array-of-arrays
-// form needed by templates.
+// Convert from array-of-objects returned from DB API to array-of-arrays needed
+// by templates.
 $enrollments = array();
 foreach ($result as $r) {
-    $e = array('id' => $r->id,
-               'name' => $r->name,
-               'username' => $r->username,
-               'coursename'=> $r->coursename,
-               'coursestart' => $r->coursestart,
-               'enrollstart' => $r->enrollstart,
-               'enrollend' => $r->enrollend,
-               'timeaccess' => $r->timeaccess,
+    $enrollments[] = array(
+        'id' => $r->id,
+        'name' => $r->name,
+        'username' => $r->username,
+        'coursename'=> $r->coursename,
+        'coursestart' => $r->coursestart,
+        'enrollstart' => $r->enrollstart,
+        'enrollend' => $r->enrollend,
+        'timeaccess' => $r->timeaccess,
     );
-    $enrollments[] = $e;
 }
 
 // Set up DataTables functions on the table of enrollments
