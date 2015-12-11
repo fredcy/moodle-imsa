@@ -5,7 +5,6 @@ require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/formslib.php');
 require_once(__DIR__ . '/lib.php');
 
-
 class enrollment_update_form extends \moodleform {
     function definition() {
         $mform =& $this->_form;
@@ -16,16 +15,12 @@ class enrollment_update_form extends \moodleform {
     }
 }
 
-
 require_login();
-$PAGE->set_context(\context_system::instance());
-$url = new \moodle_url("/admin/tool/imsa/enrollments_update.php");
-$PAGE->set_url($url);
-$PAGE->set_pagelayout('report');
+admin_externalpage_setup('enrollments_update');
+
 $title = get_string('pluginname', 'tool_imsa');
 $PAGE->set_title($title);       // TITLE element value in HEAD
 $PAGE->set_heading($title);     // just below logo
-admin_externalpage_setup('enrollments_update');
 
 $form_id = 'update_form';
 $attributes = array('id' => $form_id);
@@ -51,6 +46,7 @@ foreach (explode(',', $selections_s) as $selection) {
 
 if ($mform->is_cancelled()) {
     $SESSION->alerts[] = array("Cancelled", 'notifymessage');
+    redirect('enrollments.php');
 } else if ($from_form = $mform->get_data()) {
     // Form submitted; update the user_enrolment.timeend values to the new date.
     // We already got $enroll_ids from the 'selections' above; don't need to get

@@ -38,14 +38,16 @@ class tool_imsa_renderer extends \plugin_renderer_base {
         return $out;
     }
 
-    public function enrollments($form_id, $data) {
+    public function enrollments($form_id, $data, $allowedToUpdate) {
         $out = $this->output->heading("Enrollments");
         $out .= $this->output->render_from_template("tool_imsa/enrollments", $data);
-        $out .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'update',
-                                                      'value' => 'Update selected enrollments >>'));
-        $form_attrs = array('action' => 'enrollments_update.php', 'method' => 'post', 'id' => $form_id);
-        $out = html_writer::tag('form', $out, $form_attrs);
-
+        if ($allowedToUpdate) {
+            $out .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'update',
+                                                          'value' => 'Update selected enrollments >>'));
+            $form_attrs = array('action' => 'enrollments_update.php', 'method' => 'post', 'id' => $form_id);
+            $out = html_writer::tag('form', $out, $form_attrs);
+        }
+        $out .= $this->output->render_from_template("tool_imsa/enrollments_legend", $data);
         #$out .= ('<pre>' . print_r($data, true) . '</pre>');
         return $out;
     }
